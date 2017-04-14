@@ -31,13 +31,15 @@ function getFeedItemSync(feedItemId) {
  * Emulates a REST call to get the feed data for a particular user.
  */
 export function getFeedData(user, cb) {
-  var userData = readDocument('users', user);
-  var feedData = readDocument('feeds', userData.feed);
-  // While map takes a callback, it is synchronous, not asynchronous.
-  // It calls the callback immediately.
-  feedData.contents = feedData.contents.map(getFeedItemSync);
-  // Return FeedData with resolved references.
-  emulateServerReturn(feedData, cb);
+  var xhr = new XMLHttpRequest();
+   xhr.open('GET', '/user/4/feed');
+  xhr.setRequestHeader('Authorization', 'Bearer eyJpZCI6NH0=');
+
+  xhr.addEventListener('load',function(){
+    // Call the callback with the data.
+    cb(JSON.parse(xhr.responseText));
+  });
+  xhr.send();
 }
 
 /**
